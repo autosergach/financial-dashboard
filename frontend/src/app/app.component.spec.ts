@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AppComponent } from './app.component';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MetricsApiService } from './api/metrics-api.service';
 
 const metricsApiStub = {
@@ -29,7 +30,10 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [{ provide: MetricsApiService, useValue: metricsApiStub }]
+      providers: [
+        { provide: MetricsApiService, useValue: metricsApiStub },
+        provideCharts(withDefaultRegisterables())
+      ]
     }).compileComponents();
   });
 
