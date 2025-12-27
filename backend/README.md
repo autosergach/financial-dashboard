@@ -11,11 +11,14 @@ Metrics API for the Financial Dashboard. Provides summary KPIs, time series data
 - `GET /health`
 - `GET /metrics/summary?symbol=aapl`
 - `GET /metrics/timeseries?symbol=aapl&points=30`
-- `GET /metrics/top-assets`
+- `GET /metrics/top-assets?symbols=aapl,msft,amzn`
 
 ## Data source
 Stooq CSV API (no auth required):
 - `https://stooq.com/q/d/l/?s=aapl.us&i=d`
+
+## Cache
+In-memory cache for market data. Configure TTL with `CACHE_TTL_MS` (default 300000).
 
 ## Development
 ```

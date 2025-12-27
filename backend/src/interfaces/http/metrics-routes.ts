@@ -18,7 +18,7 @@ export function createMetricsRouter(service: MetricsService): Router {
   });
 
   router.get("/top-assets", async (_req, res) => {
-    const symbols = ["aapl", "msft", "amzn", "goog", "meta", "tsla"];
+    const symbols = getSymbols(_req.query.symbols);
     const top = await service.getTopAssets(symbols);
     res.json({ data: top });
   });
@@ -36,4 +36,15 @@ function getSymbol(value: unknown): string {
 function getNumber(value: unknown, fallback: number): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function getSymbols(value: unknown): string[] {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return ["aapl", "msft", "amzn", "goog", "meta", "tsla"];
+  }
+
+  return value
+    .split(",")
+    .map((symbol) => symbol.trim())
+    .filter((symbol) => symbol.length > 0);
 }
