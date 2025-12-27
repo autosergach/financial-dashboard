@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
@@ -18,11 +18,35 @@ export class AppComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly metricsApi = inject(MetricsApiService);
 
+  tools = ['Overview', 'Watchlist', 'Movers', 'Risk', 'Allocation'] as const;
+  periods = ['7D', '30D', '90D', '1Y'] as const;
+  viewModes = ['Summary', 'Detail'] as const;
+  themes = ['Light', 'Dim'] as const;
+  densities = ['Comfort', 'Compact'] as const;
+
+  activeTool = signal<(typeof this.tools)[number]>('Overview');
+  activePeriod = signal<(typeof this.periods)[number]>('30D');
+  activeView = signal<(typeof this.viewModes)[number]>('Summary');
+  activeTheme = signal<(typeof this.themes)[number]>('Light');
+  activeDensity = signal<(typeof this.densities)[number]>('Comfort');
+
+  showKpi = signal(true);
+  showChart = signal(true);
+  showTable = signal(true);
+
   summary = signal<SummaryMetrics | null>(null);
   series = signal<TimeSeriesPoint[]>([]);
   topAssets = signal<TopAsset[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+
+  chartLabel = computed(() => {
+    const summary = this.summary();
+    if (!summary) {
+      return 'Price movement';
+    }
+    return `${summary.symbol} Close`;
+  });
 
   lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
@@ -61,15 +85,37 @@ export class AppComponent {
     this.loadData();
   }
 
+  selectTool(tool: (typeof this.tools)[number]) {
+    this.activeTool.set(tool);
+  }
+
+  selectPeriod(period: (typeof this.periods)[number]) {
+    this.activePeriod.set(period);
+    this.loadData();
+  }
+
+  selectViewMode(mode: (typeof this.viewModes)[number]) {
+    this.activeView.set(mode);
+  }
+
+  selectTheme(theme: (typeof this.themes)[number]) {
+    this.activeTheme.set(theme);
+  }
+
+  selectDensity(density: (typeof this.densities)[number]) {
+    this.activeDensity.set(density);
+  }
+
   private loadData() {
     const symbol = 'aapl';
+    const points = this.pointsForPeriod(this.activePeriod());
     this.loading.set(true);
     this.error.set(null);
 
     forkJoin({
       summary: this.metricsApi.getSummary(symbol),
-      series: this.metricsApi.getTimeSeries(symbol, 30),
-      topAssets: this.metricsApi.getTopAssets()
+      series: this.metricsApi.getTimeSeries(symbol, points),
+      topAssets: this.metricsApi.getTopAssets(['aapl', 'msft', 'amzn', 'goog', 'meta', 'tsla'])
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -102,5 +148,19 @@ export class AppComponent {
         }
       ]
     };
+  }
+
+  private pointsForPeriod(period: (typeof this.periods)[number]) {
+    switch (period) {
+      case '7D':
+        return 7;
+      case '30D':
+        return 30;
+      case '90D':
+        return 90;
+      case '1Y':
+      default:
+        return 252;
+    }
   }
 }

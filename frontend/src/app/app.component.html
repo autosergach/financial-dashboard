@@ -1,4 +1,8 @@
-<div class="app-shell">
+<div
+  class="app-shell"
+  [class.theme-dim]="activeTheme() === 'Dim'"
+  [class.density-compact]="activeDensity() === 'Compact'"
+>
   <header class="page-header">
     <div>
       <p class="eyebrow">Market Pulse</p>
@@ -19,6 +23,81 @@
     </div>
   </header>
 
+  <section class="toolbar">
+    <div class="toolbar-group">
+      <p class="toolbar-label">Tools</p>
+      <div class="chip-group">
+        <button
+          class="chip"
+          *ngFor="let tool of tools"
+          [class.active]="tool === activeTool()"
+          (click)="selectTool(tool)"
+        >
+          {{ tool }}
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-group">
+      <p class="toolbar-label">Period</p>
+      <div class="chip-group">
+        <button
+          class="chip"
+          *ngFor="let period of periods"
+          [class.active]="period === activePeriod()"
+          (click)="selectPeriod(period)"
+        >
+          {{ period }}
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-group">
+      <p class="toolbar-label">Modes</p>
+      <div class="chip-group">
+        <button
+          class="chip"
+          *ngFor="let mode of viewModes"
+          [class.active]="mode === activeView()"
+          (click)="selectViewMode(mode)"
+        >
+          {{ mode }}
+        </button>
+        <button
+          class="chip"
+          *ngFor="let theme of themes"
+          [class.active]="theme === activeTheme()"
+          (click)="selectTheme(theme)"
+        >
+          {{ theme }}
+        </button>
+        <button
+          class="chip"
+          *ngFor="let density of densities"
+          [class.active]="density === activeDensity()"
+          (click)="selectDensity(density)"
+        >
+          {{ density }}
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-group">
+      <p class="toolbar-label">Widgets</p>
+      <div class="chip-group">
+        <button class="chip" [class.active]="showKpi()" (click)="showKpi.set(!showKpi())">
+          KPI
+        </button>
+        <button class="chip" [class.active]="showChart()" (click)="showChart.set(!showChart())">
+          Trend
+        </button>
+        <button class="chip" [class.active]="showTable()" (click)="showTable.set(!showTable())">
+          Table
+        </button>
+      </div>
+    </div>
+  </section>
+
   <div class="state" *ngIf="loading()">
     <span class="loader"></span>
     <p>Loading market metrics...</p>
@@ -28,7 +107,7 @@
     <p>{{ message }}</p>
   </div>
 
-  <section class="kpi-grid" *ngIf="summary() as summary">
+  <section class="kpi-grid" *ngIf="showKpi() && summary() as summary">
     <article class="kpi-card">
       <p class="kpi-label">Latest close</p>
       <h2>{{ summary.latest | number: '1.2-2' }}</h2>
@@ -51,14 +130,14 @@
     </article>
   </section>
 
-  <section class="main-grid" *ngIf="!loading() && !error()">
-    <article class="panel chart-panel">
+  <section class="main-grid" *ngIf="!loading() && !error() && activeTool() === 'Overview'">
+    <article class="panel chart-panel" *ngIf="showChart()">
       <div class="panel-header">
         <div>
           <p class="panel-kicker">Trend</p>
-          <h3>Price movement</h3>
+          <h3>{{ chartLabel() }}</h3>
         </div>
-        <span class="tag">30 sessions</span>
+        <span class="tag">{{ activePeriod() }} sessions</span>
       </div>
       <div class="chart-wrap">
         <canvas
@@ -70,7 +149,7 @@
       </div>
     </article>
 
-    <article class="panel table-panel">
+    <article class="panel table-panel" *ngIf="showTable()">
       <div class="panel-header">
         <div>
           <p class="panel-kicker">Leaders</p>
@@ -95,5 +174,16 @@
         </tbody>
       </table>
     </article>
+  </section>
+
+  <section class="panel placeholder" *ngIf="!loading() && !error() && activeTool() !== 'Overview'">
+    <div>
+      <p class="panel-kicker">Module</p>
+      <h3>{{ activeTool() }}</h3>
+    </div>
+    <p class="subtitle">
+      This tool will introduce specialized analytics views. Stay tuned for the next
+      iteration.
+    </p>
   </section>
 </div>

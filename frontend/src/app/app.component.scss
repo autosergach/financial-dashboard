@@ -141,6 +141,88 @@ h1 {
   gap: 1.5rem;
 }
 
+.toolbar {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.toolbar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toolbar-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-muted);
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.chip {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-muted);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chip.active {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border-color: rgba(27, 99, 115, 0.45);
+}
+
+.placeholder {
+  gap: 0.75rem;
+  min-height: 160px;
+}
+
+.theme-dim {
+  --color-ink: #e2e8f0;
+  --color-muted: #94a3b8;
+  --color-border: rgba(148, 163, 184, 0.2);
+  --color-surface: rgba(15, 23, 42, 0.9);
+  --color-surface-alt: rgba(30, 41, 59, 0.9);
+  --color-accent: #38bdf8;
+  --color-accent-soft: rgba(56, 189, 248, 0.2);
+  background: rgba(15, 23, 42, 0.2);
+  border-radius: 24px;
+  padding: 3.5rem 5vw 4rem;
+}
+
+.density-compact {
+  gap: 1.6rem;
+}
+
+.density-compact .kpi-card {
+  padding: 1rem 1.2rem;
+}
+
+.density-compact .panel {
+  padding: 1.2rem 1.3rem;
+}
+
+.density-compact .toolbar {
+  padding: 1.1rem;
+}
+
 .panel {
   background: var(--color-surface);
   border-radius: 20px;
@@ -210,6 +292,10 @@ h1 {
 @media (max-width: 960px) {
   .main-grid {
     grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    padding: 1.25rem;
   }
 
   .header-meta {

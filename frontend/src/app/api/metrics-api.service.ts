@@ -29,7 +29,15 @@ export class MetricsApiService {
       .pipe(map((response) => response.data));
   }
 
-  getTopAssets() {
+  getTopAssets(symbols?: string[]) {
+    if (symbols && symbols.length > 0) {
+      return this.http
+        .get<ApiResponse<TopAsset[]>>(`${API_BASE_URL}/metrics/top-assets`, {
+          params: { symbols: symbols.join(',') }
+        })
+        .pipe(map((response) => response.data));
+    }
+
     return this.http
       .get<ApiResponse<TopAsset[]>>(`${API_BASE_URL}/metrics/top-assets`)
       .pipe(map((response) => response.data));
