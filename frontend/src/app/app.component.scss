@@ -77,6 +77,8 @@ h1 {
 .state.error {
   border-color: rgba(190, 18, 60, 0.3);
   color: #be123c;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .loader {
@@ -223,6 +225,39 @@ h1 {
 .placeholder {
   gap: 0.75rem;
   min-height: 160px;
+}
+
+.empty-state {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.skeleton-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.skeleton {
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.06) 0%,
+    rgba(15, 23, 42, 0.12) 50%,
+    rgba(15, 23, 42, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .theme-dim {

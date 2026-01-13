@@ -119,7 +119,11 @@
   </div>
 
   <div class="state error" *ngIf="error() as message">
-    <p>{{ message }}</p>
+    <div>
+      <p>{{ message }}</p>
+      <p class="subtitle">Check your connection or try another symbol.</p>
+    </div>
+    <button class="chip" type="button" (click)="retryLoad()">Retry</button>
   </div>
 
   <section class="kpi-grid" *ngIf="showKpi() && summary() as summary">
@@ -142,6 +146,16 @@
       <p class="kpi-label">Range low</p>
       <h2>{{ summary.rangeLow | number: '1.2-2' }}</h2>
       <span class="kpi-meta">30-day range</span>
+    </article>
+  </section>
+
+  <section class="kpi-grid" *ngIf="showKpi() && !summary() && !loading() && !error()">
+    <article class="panel placeholder">
+      <div>
+        <p class="panel-kicker">No data</p>
+        <h3>Summary unavailable</h3>
+      </div>
+      <p class="subtitle">Try another symbol or refresh the data.</p>
     </article>
   </section>
 
@@ -188,6 +202,9 @@
           </tr>
         </tbody>
       </table>
+      <div class="empty-state" *ngIf="topAssets().length === 0">
+        <p>No movers data for the selected period.</p>
+      </div>
     </article>
   </section>
 
@@ -200,5 +217,17 @@
       This tool will introduce specialized analytics views. Stay tuned for the next
       iteration.
     </p>
+  </section>
+
+  <section class="panel placeholder" *ngIf="loading() && activeTool() === 'Overview'">
+    <div>
+      <p class="panel-kicker">Loading</p>
+      <h3>Preparing analytics</h3>
+    </div>
+    <div class="skeleton-grid">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
   </section>
 </div>

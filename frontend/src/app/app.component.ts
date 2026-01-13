@@ -55,6 +55,7 @@ export class AppComponent {
   topAssets = signal<TopAsset[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+  lastUpdated = signal<Date | null>(null);
 
   chartLabel = computed(() => {
     const summary = this.summary();
@@ -168,12 +169,17 @@ export class AppComponent {
           this.topAssets.set(topAssets);
           this.updateChart(summary, series);
           this.loading.set(false);
+          this.lastUpdated.set(new Date());
         },
         error: () => {
           this.error.set('Failed to load market data. Try again later.');
           this.loading.set(false);
         }
       });
+  }
+
+  retryLoad() {
+    this.loadData();
   }
 
   private updateChart(summary: SummaryMetrics, series: TimeSeriesPoint[]) {
