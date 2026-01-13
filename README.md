@@ -73,6 +73,26 @@ cd frontend
 npm test
 ```
 
+## Deployment
+### Backend (Render)
+1) Create a Render account: https://render.com
+2) New → Web Service → connect this repo.
+3) Configure:
+   - Root directory: `backend`
+   - Build command: `npm install && npm run build`
+   - Start command: `node dist/index.js`
+4) Deploy and copy the public URL, e.g. `https://financial-dashboard-5o14.onrender.com`.
+
+### Frontend (Vercel)
+1) Create a Vercel account: https://vercel.com
+2) New Project → import this repo.
+3) Configure:
+   - Root directory: `frontend`
+   - Build command: `npm run build`
+   - Output directory: `dist/frontend`
+4) Update `frontend/vercel.json` to point to your Render URL.
+   - Current backend URL: `https://financial-dashboard-5o14.onrender.com`
+
 ## Documentation
 - `docs/architecture.md`
 - `docs/adr/`
