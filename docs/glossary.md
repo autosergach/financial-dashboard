@@ -4,3 +4,4 @@
 - Time series: Sequence of metric values indexed by time.
 - Aggregation: Reducing raw data into summary metrics.
 - DTO: Data transfer object used for API contracts.
+- Toolbar: UI control surface for tools, periods, modes, and widgets.

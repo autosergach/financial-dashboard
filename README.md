@@ -1,21 +1,26 @@
 # financial-dashboard
 
-Financial analytics dashboard that aggregates market data and presents KPIs, time series, and top assets in a clean, testable architecture.
+Financial analytics dashboard that aggregates public market data and visualizes KPIs, time series, and top assets. Built to demonstrate clean architecture, clear data contracts, and production-grade documentation.
 
-## Goals
-- Clear architecture (domain / application / infrastructure / interfaces).
-- Reliable metrics API with deterministic data contracts.
-- Insightful UI with charts and tables, built for fast iteration.
-- Strong documentation, tests, and CI to showcase engineering discipline.
+## What this app does
+- Ingests daily close prices from Stooq (no API key required).
+- Aggregates metrics in a clean layered backend.
+- Presents insights in a strict, analytics-first Angular dashboard.
 
-## Architecture (planned)
-- Backend: modular monolith with clean layers and adapter-based integrations.
-- Frontend: SPA with a small, predictable state layer and reusable data widgets.
-- Data pipeline: ingestion -> normalization -> aggregation -> presentation.
+## Screenshots
+Add screenshots to `docs/assets/` and update links below.
+
+- `docs/assets/dashboard-overview.png`
+- `docs/assets/toolbar-modes.png`
+
+## Architecture
+- Backend: modular monolith with domain/application/infrastructure/interfaces layers.
+- Frontend: Angular SPA with a thin API layer and reusable widgets.
+- Pipeline: ingestion -> normalization -> aggregation -> presentation.
 
 See `docs/architecture.md` and `docs/adr/` for decisions and diagrams.
 
-## Project structure (planned)
+## Project structure
 ```
 /
   backend/
@@ -27,21 +32,47 @@ See `docs/architecture.md` and `docs/adr/` for decisions and diagrams.
   frontend/
     src/
       api/
-      components/
-      pages/
-      store/
+      app/
   docs/
     adr/
     assets/
 ```
 
-## API sketch (planned)
-- `GET /metrics/summary`
-- `GET /metrics/timeseries`
-- `GET /metrics/top-assets`
+## API
+- `GET /health`
+- `GET /metrics/summary?symbol=aapl`
+- `GET /metrics/timeseries?symbol=aapl&points=30`
+- `GET /metrics/top-assets?symbols=aapl,msft,amzn`
 
-## Getting started
-Implementation starts after documentation and architecture baselines are complete.
+## Local development
+Backend:
+```
+cd backend
+npm install
+npm run dev
+```
+
+Frontend:
+```
+cd frontend
+npm install
+npm start
+```
+
+The frontend proxies `/api` to `http://localhost:3000`.
+
+## Testing
+Backend:
+```
+cd backend
+npm test
+```
+
+Frontend:
+```
+cd frontend
+npm test
+```
 
 ## Documentation
 - `docs/architecture.md`

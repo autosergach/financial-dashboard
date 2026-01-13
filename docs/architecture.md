@@ -1,7 +1,7 @@
 # Architecture
 
 ## Overview
-The system is split into a backend metrics API and a frontend analytics dashboard. Data flows from ingestion to aggregation and is exposed via stable DTOs for visualization.
+The system is split into a backend metrics API and a frontend analytics dashboard. Data flows from ingestion to aggregation and is exposed via stable DTOs for visualization. The frontend includes a toolbar to control periods, modes, and visible widgets.
 
 ## Data flow
 ```mermaid
@@ -19,11 +19,14 @@ flowchart LR
 - infrastructure: integrations, persistence, and external APIs.
 - interfaces: HTTP controllers, DTOs, and validation.
 
+### Cache
+- in-memory cache wraps the market data provider.
+- TTL configurable via `CACHE_TTL_MS`.
+
 ## Frontend layers
 - api: data fetching and DTO mapping.
-- store: state management (thin and explicit).
+- app: local state for toolbar, filters, and widget toggles.
 - components: reusable widgets (cards, charts, tables).
-- pages: composition of widgets into views.
 
 ## Non-goals (initial)
 - Real-time streaming. Polling with cache is enough for v1.
