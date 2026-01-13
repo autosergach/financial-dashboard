@@ -3,6 +3,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://financial-dashboard-5o14.onrender.com/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
