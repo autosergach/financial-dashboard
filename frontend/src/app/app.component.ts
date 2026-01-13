@@ -7,6 +7,13 @@ import { BaseChartDirective } from 'ng2-charts';
 import { MetricsApiService } from './api/metrics-api.service';
 import type { SummaryMetrics, TimeSeriesPoint, TopAsset } from './models/metrics';
 
+type Tool = 'Overview' | 'Watchlist' | 'Movers' | 'Risk' | 'Allocation';
+type Period = '7D' | '30D' | '90D' | '1Y';
+type ViewMode = 'Summary' | 'Detail';
+type ThemeMode = 'Light' | 'Dim';
+type DensityMode = 'Comfort' | 'Compact';
+type SymbolValue = 'aapl' | 'msft' | 'amzn' | 'goog' | 'meta' | 'tsla';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,17 +25,26 @@ export class AppComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly metricsApi = inject(MetricsApiService);
 
-  tools = ['Overview', 'Watchlist', 'Movers', 'Risk', 'Allocation'] as const;
-  periods = ['7D', '30D', '90D', '1Y'] as const;
-  viewModes = ['Summary', 'Detail'] as const;
-  themes = ['Light', 'Dim'] as const;
-  densities = ['Comfort', 'Compact'] as const;
+  tools: Tool[] = ['Overview', 'Watchlist', 'Movers', 'Risk', 'Allocation'];
+  periods: Period[] = ['7D', '30D', '90D', '1Y'];
+  viewModes: ViewMode[] = ['Summary', 'Detail'];
+  themes: ThemeMode[] = ['Light', 'Dim'];
+  densities: DensityMode[] = ['Comfort', 'Compact'];
+  symbols = [
+    { label: 'AAPL', value: 'aapl' },
+    { label: 'MSFT', value: 'msft' },
+    { label: 'AMZN', value: 'amzn' },
+    { label: 'GOOG', value: 'goog' },
+    { label: 'META', value: 'meta' },
+    { label: 'TSLA', value: 'tsla' }
+  ] as const;
 
-  activeTool = signal<(typeof this.tools)[number]>('Overview');
-  activePeriod = signal<(typeof this.periods)[number]>('30D');
-  activeView = signal<(typeof this.viewModes)[number]>('Summary');
-  activeTheme = signal<(typeof this.themes)[number]>('Light');
-  activeDensity = signal<(typeof this.densities)[number]>('Comfort');
+  activeTool = signal<Tool>('Overview');
+  activePeriod = signal<Period>('30D');
+  activeView = signal<ViewMode>('Summary');
+  activeTheme = signal<ThemeMode>('Light');
+  activeDensity = signal<DensityMode>('Comfort');
+  activeSymbol = signal<SymbolValue>('aapl');
 
   showKpi = signal(true);
   showChart = signal(true);
@@ -82,32 +98,59 @@ export class AppComponent {
   };
 
   constructor() {
+    this.restorePreferences();
     this.loadData();
   }
 
-  selectTool(tool: (typeof this.tools)[number]) {
+  selectTool(tool: Tool) {
     this.activeTool.set(tool);
+    this.persistPreferences();
   }
 
-  selectPeriod(period: (typeof this.periods)[number]) {
+  selectPeriod(period: Period) {
     this.activePeriod.set(period);
+    this.persistPreferences();
     this.loadData();
   }
 
-  selectViewMode(mode: (typeof this.viewModes)[number]) {
+  selectViewMode(mode: ViewMode) {
     this.activeView.set(mode);
+    this.persistPreferences();
   }
 
-  selectTheme(theme: (typeof this.themes)[number]) {
+  selectTheme(theme: ThemeMode) {
     this.activeTheme.set(theme);
+    this.persistPreferences();
   }
 
-  selectDensity(density: (typeof this.densities)[number]) {
+  selectDensity(density: DensityMode) {
     this.activeDensity.set(density);
+    this.persistPreferences();
+  }
+
+  selectSymbol(symbol: SymbolValue) {
+    this.activeSymbol.set(symbol);
+    this.persistPreferences();
+    this.loadData();
+  }
+
+  toggleWidget(widget: 'kpi' | 'chart' | 'table') {
+    switch (widget) {
+      case 'kpi':
+        this.showKpi.set(!this.showKpi());
+        break;
+      case 'chart':
+        this.showChart.set(!this.showChart());
+        break;
+      case 'table':
+        this.showTable.set(!this.showTable());
+        break;
+    }
+    this.persistPreferences();
   }
 
   private loadData() {
-    const symbol = 'aapl';
+    const symbol = this.activeSymbol();
     const points = this.pointsForPeriod(this.activePeriod());
     this.loading.set(true);
     this.error.set(null);
@@ -115,7 +158,7 @@ export class AppComponent {
     forkJoin({
       summary: this.metricsApi.getSummary(symbol),
       series: this.metricsApi.getTimeSeries(symbol, points),
-      topAssets: this.metricsApi.getTopAssets(['aapl', 'msft', 'amzn', 'goog', 'meta', 'tsla'])
+      topAssets: this.metricsApi.getTopAssets(this.symbols.map((item) => item.value))
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -150,7 +193,7 @@ export class AppComponent {
     };
   }
 
-  private pointsForPeriod(period: (typeof this.periods)[number]) {
+  private pointsForPeriod(period: Period) {
     switch (period) {
       case '7D':
         return 7;
@@ -161,6 +204,72 @@ export class AppComponent {
       case '1Y':
       default:
         return 252;
+    }
+  }
+
+  private persistPreferences() {
+    const preferences = {
+      tool: this.activeTool(),
+      period: this.activePeriod(),
+      view: this.activeView(),
+      theme: this.activeTheme(),
+      density: this.activeDensity(),
+      symbol: this.activeSymbol(),
+      widgets: {
+        kpi: this.showKpi(),
+        chart: this.showChart(),
+        table: this.showTable()
+      }
+    };
+
+    try {
+      localStorage.setItem('fd.preferences', JSON.stringify(preferences));
+    } catch {
+      // ignore storage errors
+    }
+  }
+
+  private restorePreferences() {
+    try {
+      const raw = localStorage.getItem('fd.preferences');
+      if (!raw) {
+        return;
+      }
+      const parsed = JSON.parse(raw) as Partial<{
+        tool: Tool;
+        period: Period;
+        view: ViewMode;
+        theme: ThemeMode;
+        density: DensityMode;
+        symbol: SymbolValue;
+        widgets: { kpi: boolean; chart: boolean; table: boolean };
+      }>;
+
+      if (parsed.tool && this.tools.includes(parsed.tool)) {
+        this.activeTool.set(parsed.tool);
+      }
+      if (parsed.period && this.periods.includes(parsed.period)) {
+        this.activePeriod.set(parsed.period);
+      }
+      if (parsed.view && this.viewModes.includes(parsed.view)) {
+        this.activeView.set(parsed.view);
+      }
+      if (parsed.theme && this.themes.includes(parsed.theme)) {
+        this.activeTheme.set(parsed.theme);
+      }
+      if (parsed.density && this.densities.includes(parsed.density)) {
+        this.activeDensity.set(parsed.density);
+      }
+      if (parsed.symbol && this.symbols.some((item) => item.value === parsed.symbol)) {
+        this.activeSymbol.set(parsed.symbol);
+      }
+      if (parsed.widgets) {
+        this.showKpi.set(parsed.widgets.kpi);
+        this.showChart.set(parsed.widgets.chart);
+        this.showTable.set(parsed.widgets.table);
+      }
+    } catch {
+      // ignore storage errors
     }
   }
 }

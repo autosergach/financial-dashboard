@@ -25,6 +25,21 @@
 
   <section class="toolbar">
     <div class="toolbar-group">
+      <p class="toolbar-label">Symbol</p>
+      <div class="select-wrap">
+        <select
+          class="select"
+          [value]="activeSymbol()"
+          (change)="selectSymbol(($any($event.target)).value)"
+        >
+          <option *ngFor="let symbol of symbols" [value]="symbol.value">
+            {{ symbol.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="toolbar-group">
       <p class="toolbar-label">Tools</p>
       <div class="chip-group">
         <button
@@ -85,13 +100,13 @@
     <div class="toolbar-group">
       <p class="toolbar-label">Widgets</p>
       <div class="chip-group">
-        <button class="chip" [class.active]="showKpi()" (click)="showKpi.set(!showKpi())">
+        <button class="chip" [class.active]="showKpi()" (click)="toggleWidget('kpi')">
           KPI
         </button>
-        <button class="chip" [class.active]="showChart()" (click)="showChart.set(!showChart())">
+        <button class="chip" [class.active]="showChart()" (click)="toggleWidget('chart')">
           Trend
         </button>
-        <button class="chip" [class.active]="showTable()" (click)="showTable.set(!showTable())">
+        <button class="chip" [class.active]="showTable()" (click)="toggleWidget('table')">
           Table
         </button>
       </div>

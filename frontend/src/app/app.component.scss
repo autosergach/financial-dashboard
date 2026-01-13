@@ -170,6 +170,37 @@ h1 {
   gap: 0.6rem;
 }
 
+.select-wrap {
+  position: relative;
+  max-width: 200px;
+}
+
+.select {
+  width: 100%;
+  appearance: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+  padding: 0.5rem 2.2rem 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0.9rem;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid var(--color-muted);
+  border-bottom: 2px solid var(--color-muted);
+  transform: translateY(-60%) rotate(45deg);
+  pointer-events: none;
+}
+
 .chip {
   border: 1px solid var(--color-border);
   background: var(--color-surface-alt);
