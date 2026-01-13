@@ -2,6 +2,8 @@
 
 Financial analytics dashboard that aggregates public market data and visualizes KPIs, time series, and top assets. Built to demonstrate clean architecture, clear data contracts, and production-grade documentation.
 
+![CI](https://github.com/autosergach/financial-dashboard/actions/workflows/ci.yml/badge.svg)
+
 ## What this app does
 - Ingests daily close prices from Stooq (no API key required).
 - Aggregates metrics in a clean layered backend.
@@ -11,6 +13,10 @@ Financial analytics dashboard that aggregates public market data and visualizes 
 ![Dashboard overview](docs/assets/dashboard-overview.png)
 ![Toolbar and modes](docs/assets/toolbar-modes.png)
 ![Dim theme](docs/assets/theme-dim.png)
+
+## Live demo
+- Frontend: https://financial-dashboard-omega-three.vercel.app/
+- Backend: https://financial-dashboard-5o14.onrender.com
 
 ## Architecture
 - Backend: modular monolith with domain/application/infrastructure/interfaces layers.
