@@ -8,10 +8,9 @@ Financial analytics dashboard that aggregates public market data and visualizes 
 - Presents insights in a strict, analytics-first Angular dashboard.
 
 ## Screenshots
-Add screenshots to `docs/assets/` and update links below.
-
-- `docs/assets/dashboard-overview.png`
-- `docs/assets/toolbar-modes.png`
+![Dashboard overview](docs/assets/dashboard-overview.png)
+![Toolbar and modes](docs/assets/toolbar-modes.png)
+![Dim theme](docs/assets/theme-dim.png)
 
 ## Architecture
 - Backend: modular monolith with domain/application/infrastructure/interfaces layers.
