@@ -65,4 +65,23 @@ describe('AppComponent', () => {
 
     expect(component.activeSymbol()).toBe('msft');
   });
+
+  it('should toggle widget visibility', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+
+    const initial = component.showChart();
+    component.toggleWidget('chart');
+
+    expect(component.showChart()).toBe(!initial);
+  });
+
+  it('should update period', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+
+    component.selectPeriod('90D');
+
+    expect(component.activePeriod()).toBe('90D');
+  });
 });
