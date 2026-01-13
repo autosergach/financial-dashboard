@@ -1,12 +1,17 @@
 import express from "express";
 import { MetricsService } from "./application/metrics-service.js";
 import { CachedMarketDataProvider } from "./infrastructure/cached-market-data-provider.js";
+import { FallbackMarketDataProvider } from "./infrastructure/fallback-market-data-provider.js";
 import { StooqProvider } from "./infrastructure/data/stooq-provider.js";
+import { MockMarketDataProvider } from "./infrastructure/data/mock-provider.js";
 import { createMetricsRouter } from "./interfaces/http/metrics-routes.js";
 
 const app = express();
 const ttlMs = Number(process.env.CACHE_TTL_MS ?? 300000);
-const provider = new CachedMarketDataProvider(new StooqProvider(), ttlMs);
+const provider = new CachedMarketDataProvider(
+  new FallbackMarketDataProvider(new StooqProvider(), new MockMarketDataProvider()),
+  ttlMs
+);
 const metricsService = new MetricsService(provider);
 
 app.use((_req, res, next) => {

@@ -20,6 +20,9 @@ Stooq CSV API (no auth required):
 ## Cache
 In-memory cache for market data. Configure TTL with `CACHE_TTL_MS` (default 300000).
 
+## Fallback
+If upstream data is unavailable, the API falls back to deterministic mock data to keep demos stable.
+
 ## Development
 ```
 cd backend
