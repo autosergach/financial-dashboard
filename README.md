@@ -87,10 +87,10 @@ npm test
 1) Create a Vercel account: https://vercel.com
 2) New Project → import this repo.
 3) Configure:
-   - Root directory: `frontend`
-   - Build command: `npm run build`
-   - Output directory: `dist/frontend`
-4) Update `frontend/vercel.json` to point to your Render URL.
+   - Root directory: repository root
+   - Build command: handled by `vercel.json`
+   - Output directory: handled by `vercel.json`
+4) Ensure `vercel.json` points to your Render URL.
    - Current backend URL: `https://financial-dashboard-5o14.onrender.com`
 
 ## Documentation
