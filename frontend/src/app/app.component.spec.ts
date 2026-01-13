@@ -56,4 +56,13 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelectorAll('.chip').length).toBeGreaterThan(0);
   });
+
+  it('should update selected symbol', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+
+    component.selectSymbol('msft');
+
+    expect(component.activeSymbol()).toBe('msft');
+  });
 });

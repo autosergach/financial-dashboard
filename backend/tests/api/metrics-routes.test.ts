@@ -14,9 +14,9 @@ const provider: MarketDataProvider = {
   }
 };
 
-function createApp() {
+function createApp(customProvider: MarketDataProvider = provider) {
   const app = express();
-  const service = new MetricsService(provider);
+  const service = new MetricsService(customProvider);
   app.use("/metrics", createMetricsRouter(service));
   return app;
 }
@@ -38,6 +38,13 @@ describe("metrics routes", () => {
     expect(response.body.data).toHaveLength(2);
   });
 
+  it("rejects invalid points", async () => {
+    const app = createApp();
+    const response = await request(app).get("/metrics/timeseries?points=0");
+
+    expect(response.status).toBe(400);
+  });
+
   it("returns top assets", async () => {
     const app = createApp();
     const response = await request(app).get("/metrics/top-assets");
@@ -54,5 +61,17 @@ describe("metrics routes", () => {
 
     expect(response.status).toBe(200);
     expect(response.body.data.length).toBeGreaterThan(0);
+  });
+
+  it("handles upstream errors", async () => {
+    const failingProvider: MarketDataProvider = {
+      async getDailySeries() {
+        throw new Error("boom");
+      }
+    };
+    const app = createApp(failingProvider);
+    const response = await request(app).get("/metrics/summary?symbol=aapl");
+
+    expect(response.status).toBe(502);
   });
 });

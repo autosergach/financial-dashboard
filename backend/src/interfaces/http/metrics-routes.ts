@@ -5,22 +5,39 @@ export function createMetricsRouter(service: MetricsService): Router {
   const router = Router();
 
   router.get("/summary", async (req, res) => {
-    const symbol = getSymbol(req.query.symbol);
-    const summary = await service.getSummary(symbol);
-    res.json({ data: summary });
+    try {
+      const symbol = getSymbol(req.query.symbol);
+      const summary = await service.getSummary(symbol);
+      res.json({ data: summary });
+    } catch {
+      res.status(502).json({ error: "Upstream data unavailable" });
+    }
   });
 
   router.get("/timeseries", async (req, res) => {
-    const symbol = getSymbol(req.query.symbol);
     const points = getNumber(req.query.points, 30);
-    const series = await service.getTimeSeries(symbol, points);
-    res.json({ data: series });
+    if (points <= 0) {
+      res.status(400).json({ error: "points must be greater than 0" });
+      return;
+    }
+
+    try {
+      const symbol = getSymbol(req.query.symbol);
+      const series = await service.getTimeSeries(symbol, points);
+      res.json({ data: series });
+    } catch {
+      res.status(502).json({ error: "Upstream data unavailable" });
+    }
   });
 
   router.get("/top-assets", async (_req, res) => {
-    const symbols = getSymbols(_req.query.symbols);
-    const top = await service.getTopAssets(symbols);
-    res.json({ data: top });
+    try {
+      const symbols = getSymbols(_req.query.symbols);
+      const top = await service.getTopAssets(symbols);
+      res.json({ data: top });
+    } catch {
+      res.status(502).json({ error: "Upstream data unavailable" });
+    }
   });
 
   return router;
